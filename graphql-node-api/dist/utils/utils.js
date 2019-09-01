@@ -11,7 +11,7 @@ exports.normalizePort = (val) => {
 };
 exports.onError = (server) => {
     return (error) => {
-        let port = server.address().port;
+        const { port } = server.address();
         if (error.syscall !== 'listen')
             throw error;
         let bind = (typeof port === 'string') ? `pipe ${port}` : `port ${port}`;
