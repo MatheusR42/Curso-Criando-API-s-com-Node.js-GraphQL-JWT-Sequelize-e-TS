@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "gulp": "node_modules/.bin/gulp"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/MatheusR42/Curso-Criando-API-s-com-Node.js-GraphQL-JWT-Sequelize-e-TS#readme",
   "devDependencies": {
-    "gulp": "^4.0.2",
+    "gulp": "^3.9.1",
     "gulp-clean": "^0.4.0",
     "gulp-typescript": "^5.0.1",
     "typescript": "^3.6.2"
