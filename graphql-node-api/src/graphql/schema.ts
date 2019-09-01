@@ -30,6 +30,11 @@ const users: any[] = [
 ]
 
 const resolvers = {
+    User: {
+        id: (parent) => parent.id,
+        name: (parent) => parent.name,
+        email: (parent) => parent.email
+    },
     Query: {
         allUsers: () => users
     },
