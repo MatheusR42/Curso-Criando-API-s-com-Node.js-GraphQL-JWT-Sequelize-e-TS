@@ -18,6 +18,9 @@
   },
   "homepage": "https://github.com/MatheusR42/Curso-Criando-API-s-com-Node.js-GraphQL-JWT-Sequelize-e-TS#readme",
   "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-clean": "^0.4.0",
+    "gulp-typescript": "^5.0.1",
     "typescript": "^3.6.2"
   }
 }
