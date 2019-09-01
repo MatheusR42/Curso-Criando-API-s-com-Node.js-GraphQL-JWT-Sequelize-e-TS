@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/MatheusR42/Curso-Criando-API-s-com-Node.js-GraphQL-JWT-Sequelize-e-TS/issues"
   },
-  "homepage": "https://github.com/MatheusR42/Curso-Criando-API-s-com-Node.js-GraphQL-JWT-Sequelize-e-TS#readme"
+  "homepage": "https://github.com/MatheusR42/Curso-Criando-API-s-com-Node.js-GraphQL-JWT-Sequelize-e-TS#readme",
+  "devDependencies": {
+    "typescript": "^3.6.2"
+  }
 }
