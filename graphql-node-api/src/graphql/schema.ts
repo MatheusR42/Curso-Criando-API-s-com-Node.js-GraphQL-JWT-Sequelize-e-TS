@@ -1,50 +1,18 @@
 import { makeExecutableSchema } from 'graphql-tools'
+import { Query } from './query'
+import { Mutation } from './mutation'
 
-const typeDefs = `
-    type User {
-        id: ID!
-        name: String!
-        email: String!
+const SchemaDefinition = `
+    type Schema {
+        query: Query,
+        mutation: Mutation
     }
+`;
 
-    type Query {
-        allUsers: [User!]
-    }
-
-    type Mutation {
-        createUser(name: String!, email: String!): User
-    }
-`
-
-const users: any[] = [
-    {
-        id: 1,
-        name: 'João',
-        email: 'joao@email.com'
-    },
-    {
-        id: 2,
-        name: 'Mario',
-        email: 'mario@email.com'
-    }
-]
-
-const resolvers = {
-    User: {
-        id: (parent) => parent.id,
-        name: (parent) => parent.name,
-        email: (parent) => parent.email
-    },
-    Query: {
-        allUsers: () => users
-    },
-    Mutation: {
-        createUser: (parent, args, context, info) => {
-            const newUser = Object.assign({id: users.length + 1}, args)
-            users.push(newUser)
-            return newUser;
-        }
-    }
-}
-
-export default makeExecutableSchema({typeDefs, resolvers})
+export default makeExecutableSchema({
+    typeDefs: [
+        SchemaDefinition,
+        Query,
+        Mutation
+    ]
+});
