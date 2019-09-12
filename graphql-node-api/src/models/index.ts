@@ -11,6 +11,13 @@ let db = null;
 
 if (!db) {
     db = {}
+    
+    config = {
+        ...config,
+        //https://sequelize.org/master/manual/querying.html#operators-aliases
+        operatorsAliases: false
+    }
+    
     const sequelize: Sequelize.Sequelize = new Sequelize(
         config.database,
         config.username,
