@@ -2,7 +2,7 @@ import { DbConnection } from "../../../interfaces/DbConnectionInterface";
 import { CommentInstance } from "../../../models/CommentModel";
 import { Transaction } from "sequelize";
 
-export const resolvers = {
+export const commentResolvers = {
     Comment: {
         user: (parent: CommentInstance, _args, {db}: {db: DbConnection}) => {
             return db.User.findById(parent.get('user'))

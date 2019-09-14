@@ -3,7 +3,7 @@ import { PostInstance } from "../../../models/PostModel";
 import { CommentInstance } from "../../../models/CommentModel";
 import { Transaction } from "sequelize";
 
-export const resolvers = {
+export const postResolvers = {
     Post: {
         author: (parent: PostInstance, _args, {db}: {db: DbConnection}) => {
             return db.User.findById(parent.get('author'))
