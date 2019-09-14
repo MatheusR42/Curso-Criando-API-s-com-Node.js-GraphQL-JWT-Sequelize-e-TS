@@ -1,4 +1,4 @@
-const UserTypes = `
+const userTypes = `
     #User definition type
     type User {
         #user id
@@ -28,12 +28,12 @@ const UserTypes = `
     }
 `;
 
-const UserQueries = `
+const userQueries = `
     users(first: Int, offset: Int): [ User! ]!
     user(id: ID!): User
 `;
 
-const UserMutations = `
+const userMutations = `
     createUser(input: UserCreateInput!): User
     updateUser(id: ID!, input: UserUpdateInput!): User
     updateUserPassword(id: ID!, input: UserUpdatePasswordInput): Boolean
@@ -41,7 +41,7 @@ const UserMutations = `
 `;
 
 export {
-    UserTypes,
-    UserQueries,
-    UserMutations
+    userTypes,
+    userQueries,
+    userMutations
 }
