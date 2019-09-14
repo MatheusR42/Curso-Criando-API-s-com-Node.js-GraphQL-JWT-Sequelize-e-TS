@@ -2,6 +2,7 @@ import { GraphQLResolveInfo } from "graphql"
 import { DbConnection } from "../../../interfaces/DbConnectionInterface"
 import { Transaction } from "sequelize"
 import { UserInstance } from "../../../models/UserModel"
+import { handleError } from "../../../utils/utils"
 
 export const userResolvers = {
     User: {
@@ -12,7 +13,7 @@ export const userResolvers = {
                 },
                 limit: first,
                 offset
-            })
+            }).catch(handleError)
         },
     },
     Query: {
@@ -20,23 +21,26 @@ export const userResolvers = {
             return db.User.findAll({
                 limit: first,
                 offset
-            });
+            }).catch(handleError)
         },
         user: async (_parent, { id }, { db }: { db: DbConnection }) => {
-            const user = await db.User.findById(id);
-
-            if (!user) {
-                throw new Error(`User with id ${id} not found`)
+            try {
+                const user = await db.User.findById(id);
+                if (!user) {
+                    throw new Error(`User with id ${id} not found`)
+                }
+    
+                return user;
+            } catch (error) {
+                return handleError(error)
             }
-
-            return user;
         }
     },
     Mutation: {
         createUser: (_parent, { input }, { db }: { db: DbConnection }) => {
             return db.sequelize.transaction((t: Transaction) => {
                 return db.User.create(input, { transaction: t })
-            })
+            }).catch(handleError)
         },
         updateUser: (_parent, { id, input }, { db }: { db: DbConnection }) => {
             id = parseInt(id)
@@ -47,7 +51,7 @@ export const userResolvers = {
                 }
 
                 return user.update(input, { transaction: t });
-            })
+            }).catch(handleError)
         },
         updateUserPassword: (_parent, { id, input }, { db }: { db: DbConnection }) => {
             id = parseInt(id)
@@ -58,7 +62,7 @@ export const userResolvers = {
                 }
 
                 return !!await user.update(input, { transaction: t });
-            })
+            }).catch(handleError)
         },
         deleteUser: (_parent, { id }, { db }: { db: DbConnection }) => {
             id = parseInt(id)
@@ -72,7 +76,7 @@ export const userResolvers = {
                 await user.destroy({ transaction: t })
 
                 return true
-            })
+            }).catch(handleError)
         }
     }
 }
