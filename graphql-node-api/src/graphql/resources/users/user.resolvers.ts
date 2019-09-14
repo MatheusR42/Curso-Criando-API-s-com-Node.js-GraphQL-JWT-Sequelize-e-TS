@@ -16,13 +16,13 @@ export const resolvers = {
         },
     },
     Query: {
-        users: (parent, { first = 10, offset = 0 }, { db }: { db: DbConnection }, info: GraphQLResolveInfo) => {
+        users: (_parent, { first = 10, offset = 0 }, { db }: { db: DbConnection }) => {
             return db.User.findAll({
                 limit: first,
                 offset
             });
         },
-        user: async (parent, { id }, { db }: { db: DbConnection }, info: GraphQLResolveInfo) => {
+        user: async (_parent, { id }, { db }: { db: DbConnection }) => {
             const user = await db.User.findById(id);
 
             if (!user) {
@@ -33,12 +33,12 @@ export const resolvers = {
         }
     },
     Mutation: {
-        createUser: (parent, { input }, { db }: { db: DbConnection }, info: GraphQLResolveInfo) => {
+        createUser: (_parent, { input }, { db }: { db: DbConnection }) => {
             return db.sequelize.transaction((t: Transaction) => {
                 return db.User.create(input, { transaction: t })
             })
         },
-        updateUser: (parent, { id, input }, { db }: { db: DbConnection }, info: GraphQLResolveInfo) => {
+        updateUser: (_parent, { id, input }, { db }: { db: DbConnection }) => {
             id = parseInt(id)
             return db.sequelize.transaction(async (t: Transaction) => {
                 const user = await db.User.findById(id);
@@ -49,7 +49,7 @@ export const resolvers = {
                 return user.update(input, { transaction: t });
             })
         },
-        updateUserPassword: (parent, { id, input }, { db }: { db: DbConnection }, info: GraphQLResolveInfo) => {
+        updateUserPassword: (_parent, { id, input }, { db }: { db: DbConnection }) => {
             id = parseInt(id)
             return db.sequelize.transaction(async (t: Transaction) => {
                 const user = await db.User.findById(id);
@@ -60,7 +60,7 @@ export const resolvers = {
                 return !!await user.update(input, { transaction: t });
             })
         },
-        deleteUser: (parent, { id, input }, { db }: { db: DbConnection }, info: GraphQLResolveInfo) => {
+        deleteUser: (_parent, { id }, { db }: { db: DbConnection }) => {
             id = parseInt(id)
             return db.sequelize.transaction(async (t: Transaction) => {
                 const user = await db.User.findById(id)
