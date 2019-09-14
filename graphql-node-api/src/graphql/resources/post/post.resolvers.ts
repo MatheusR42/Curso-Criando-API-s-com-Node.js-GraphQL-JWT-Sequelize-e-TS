@@ -52,7 +52,7 @@ export const resolvers = {
                 return post.update(input, { transaction: t })
             })
         },
-        deleteUser: (_parent, { id }, { db }: { db: DbConnection }) => {
+        deletePost: (_parent, { id }, { db }: { db: DbConnection }) => {
             id = parseInt(id)
             return db.sequelize.transaction(async (t: Transaction) => {
                 const post = await db.Post.findById(id)
