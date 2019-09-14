@@ -1,9 +1,20 @@
-import { GraphQLResolveInfo } from "graphql";
-import { DbConnection } from "../../../interfaces/DbConnectionInterface";
-import { UserInstance } from "../../../models/UserModel";
-import { Transaction } from "sequelize";
+import { GraphQLResolveInfo } from "graphql"
+import { DbConnection } from "../../../interfaces/DbConnectionInterface"
+import { Transaction } from "sequelize"
+import { UserInstance } from "../../../models/UserModel"
 
 export const resolvers = {
+    User: {
+        posts: (parent: UserInstance, { first = 10, offset = 0 }, { db }: { db: DbConnection }, info: GraphQLResolveInfo) => {
+            return db.Post.findAll({
+                where: { 
+                    author: parent.get('id')
+                },
+                limit: first,
+                offset
+            })
+        },
+    },
     Query: {
         users: (parent, { first = 10, offset = 0 }, { db }: { db: DbConnection }, info: GraphQLResolveInfo) => {
             return db.User.findAll({
@@ -59,7 +70,7 @@ export const resolvers = {
                 }
 
                 await user.destroy({ transaction: t })
-                
+
                 return true
             })
         }
