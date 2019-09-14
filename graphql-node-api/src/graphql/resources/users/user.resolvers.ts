@@ -24,6 +24,8 @@ export const userResolvers = {
             }).catch(handleError)
         },
         user: async (_parent, { id }, { db }: { db: DbConnection }) => {
+            id = parseInt(id)
+            
             try {
                 const user = await db.User.findById(id);
                 if (!user) {
