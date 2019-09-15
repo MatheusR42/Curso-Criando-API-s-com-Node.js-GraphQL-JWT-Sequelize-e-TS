@@ -41,3 +41,9 @@ export const handleError = (error: Error) => {
     console.log(errorMessage)
     return Promise.reject(new Error(errorMessage))
 }
+
+export const throwError = (condition: boolean, message: string) => {
+    if (condition) {
+        throw new Error(message)
+    }
+}
