@@ -1,12 +1,14 @@
+import * as graphqlFields from 'graphql-fields';
+import { Transaction } from "sequelize";
 import { DbConnection } from "../../../interfaces/DbConnectionInterface";
 import { PostInstance } from "../../../models/PostModel";
 import { CommentInstance } from "../../../models/CommentModel";
-import { Transaction } from "sequelize";
 import { handleError, throwError } from "../../../utils/utils";
 import { compose } from "../../composable/composable.resolver";
 import { authResolvers } from "../../composable/auth.resolver";
 import { AuthUser } from "../../../interfaces/AuthUserInterface";
 import { DataLoaders } from "../../../interfaces/DataLoadersInterface";
+import { GraphQLResolveInfo } from 'graphql';
 
 export const postResolvers = {
     Post: {
@@ -23,7 +25,8 @@ export const postResolvers = {
         }
     },
     Query: {
-        posts: (_parent, {first = 10, offset = 0}, {db}: {db: DbConnection}) => {
+        posts: (_parent, {first = 10, offset = 0}, {db}: {db: DbConnection}, info: GraphQLResolveInfo) => {
+            console.log(Object.keys(graphqlFields(info)))
             return db.Post.findAll({
                 limit: first,
                 offset
