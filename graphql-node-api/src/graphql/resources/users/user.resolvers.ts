@@ -3,6 +3,9 @@ import { DbConnection } from "../../../interfaces/DbConnectionInterface"
 import { Transaction } from "sequelize"
 import { UserInstance } from "../../../models/UserModel"
 import { handleError } from "../../../utils/utils"
+import { compose } from "../../composable/composable.resolver"
+import { authResolver } from "../../composable/auth.resolver"
+import { verifyTokenResolver } from "../../composable/verify-token.resolver"
 
 export const userResolvers = {
     User: {
@@ -17,12 +20,12 @@ export const userResolvers = {
         },
     },
     Query: {
-        users: (_parent, { first = 10, offset = 0 }, { db }: { db: DbConnection }) => {
+        users: compose(authResolver, verifyTokenResolver)((_parent, { first = 10, offset = 0 }, { db }: { db: DbConnection }) => {
             return db.User.findAll({
                 limit: first,
                 offset
             }).catch(handleError)
-        },
+        }),
         user: async (_parent, { id }, { db }: { db: DbConnection }) => {
             id = parseInt(id)
             
