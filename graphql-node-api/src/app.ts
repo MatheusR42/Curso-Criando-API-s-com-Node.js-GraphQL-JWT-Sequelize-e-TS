@@ -1,20 +1,28 @@
 import * as express from 'express';
 import * as graphqlHTTP from 'express-graphql'
 import schema from './graphql/schema'
+import db from './models'
 import { extractJwtMiddleware, dbMiddleware } from './middlewares'
+import { DataLoaderFactory } from './graphql/dataloaders/DataLoaderFactory';
 
 class App {
     public express: express.Application
+    private dataLoaderFactory: DataLoaderFactory;
 
     constructor() {
         this.express = express()
+        this.init()
+    }
+    
+    private init(): void {
+        this.dataLoaderFactory = new DataLoaderFactory(db)
         this.middleware()
     }
 
     private middleware(): void {
         this.express.use('/graphql', 
             extractJwtMiddleware(),
-            dbMiddleware(),
+            dbMiddleware(this.dataLoaderFactory),
             graphqlHTTP((req) => ({
                 schema,
                 graphiql: process.env.NODE_ENV === 'development',
