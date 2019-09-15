@@ -39,7 +39,15 @@ export const userResolvers = {
             } catch (error) {
                 return handleError(error)
             }
-        }
+        },
+        currentUser: compose(...authResolvers)(async (_parent, { input }, { db, authUser }: { db: DbConnection, authUser: AuthUser }) => {
+            const id = authUser.id;
+            const user = await db.User.findById(id)
+
+            throwError(!user, `User with id ${id} not found`)
+            
+            return user
+        })
     },
     Mutation: {
         createUser: (_parent, { input }, { db }: { db: DbConnection }) => {
