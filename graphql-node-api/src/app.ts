@@ -4,10 +4,12 @@ import schema from './graphql/schema'
 import db from './models'
 import { extractJwtMiddleware, dbMiddleware } from './middlewares'
 import { DataLoaderFactory } from './graphql/dataloaders/DataLoaderFactory';
+import { RequestedFields } from './graphql/ast/RequestedFields';
 
 class App {
     public express: express.Application
     private dataLoaderFactory: DataLoaderFactory;
+    private requestedFields: RequestedFields;
 
     constructor() {
         this.express = express()
@@ -16,13 +18,14 @@ class App {
     
     private init(): void {
         this.dataLoaderFactory = new DataLoaderFactory(db)
+        this.requestedFields = new RequestedFields()
         this.middleware()
     }
 
     private middleware(): void {
         this.express.use('/graphql', 
             extractJwtMiddleware(),
-            dbMiddleware(this.dataLoaderFactory),
+            dbMiddleware(this.dataLoaderFactory, this.requestedFields),
             graphqlHTTP((req) => ({
                 schema,
                 graphiql: process.env.NODE_ENV === 'development',
