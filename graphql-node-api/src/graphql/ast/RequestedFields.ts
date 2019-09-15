@@ -1,6 +1,6 @@
 import { GraphQLResolveInfo } from "graphql";
 import * as graphqlFields from "graphql-fields";
-import { difference } from "lodash";
+import { difference, union } from "lodash";
 
 export class RequestedFields {
   getFields(
@@ -15,7 +15,7 @@ export class RequestedFields {
 
     const { keep, exclude } = options;
 
-    fields = keep ? [...fields, ...keep] : fields;
+    fields = keep ? union<string>(fields, keep) : fields;
 
     return exclude ? difference<string>(fields, exclude) : fields;
   }
