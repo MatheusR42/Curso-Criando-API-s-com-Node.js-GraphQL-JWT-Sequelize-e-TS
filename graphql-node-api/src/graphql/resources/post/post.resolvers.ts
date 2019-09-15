@@ -6,11 +6,13 @@ import { handleError, throwError } from "../../../utils/utils";
 import { compose } from "../../composable/composable.resolver";
 import { authResolvers } from "../../composable/auth.resolver";
 import { AuthUser } from "../../../interfaces/AuthUserInterface";
+import { DataLoaders } from "../../../interfaces/DataLoadersInterface";
 
 export const postResolvers = {
     Post: {
-        author: (parent: PostInstance, _args, {db}: {db: DbConnection}) => {
-            return db.User.findById(parent.get('author')).catch(handleError)
+        author: (parent: PostInstance, _args, {dataloaders: { userLoader }}: {dataloaders: DataLoaders}) => {
+            return userLoader.load(parent.get('author'))
+                    .catch(handleError)
         },
         comments: (parent: CommentInstance, {first = 10, offset = 0}, {db}: {db: DbConnection}) => {
             return db.Comment.findAll({

@@ -5,16 +5,17 @@ import { handleError, throwError } from "../../../utils/utils";
 import { compose } from "../../composable/composable.resolver";
 import { authResolvers } from "../../composable/auth.resolver";
 import { AuthUser } from "../../../interfaces/AuthUserInterface";
+import { DataLoaders } from "../../../interfaces/DataLoadersInterface";
 
 export const commentResolvers = {
     Comment: {
-        user: (parent: CommentInstance, _args, { db }: { db: DbConnection }) => {
-            return db.User.findById(parent.get('user'))
-                .catch(handleError)
+        user: (parent: CommentInstance, _args, { dataloaders: { userLoader } } : { dataloaders: DataLoaders }) => {
+            return userLoader.load(parent.get('user'))
+                    .catch(handleError)
         },
-        post: (parent: CommentInstance, _args, { db }: { db: DbConnection }) => {
-            return db.Post.findById(parent.get('post'))
-                .catch(handleError)
+        post: (parent: CommentInstance, _args, { dataloaders: { postLoader } } : { dataloaders: DataLoaders }) => {
+            return postLoader.load(parent.get('post'))
+                    .catch(handleError)
         }
     },
     Query: {
@@ -25,7 +26,7 @@ export const commentResolvers = {
                 where: { post: postId },
                 limit: first,
                 offset
-            }).catch(handleError)
+            }).catch(handleError)   
         }
     },
     Mutation: {
