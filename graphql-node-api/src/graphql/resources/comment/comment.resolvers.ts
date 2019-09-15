@@ -1,7 +1,10 @@
 import { DbConnection } from "../../../interfaces/DbConnectionInterface";
 import { CommentInstance } from "../../../models/CommentModel";
 import { Transaction } from "sequelize";
-import { handleError } from "../../../utils/utils";
+import { handleError, throwError } from "../../../utils/utils";
+import { compose } from "../../composable/composable.resolver";
+import { authResolvers } from "../../composable/auth.resolver";
+import { AuthUser } from "../../../interfaces/AuthUserInterface";
 
 export const commentResolvers = {
     Comment: {
@@ -26,36 +29,36 @@ export const commentResolvers = {
         }
     },
     Mutation: {
-        createComment: (_parent, { input }, { db }: { db: DbConnection }) => {
+        createComment: compose(...authResolvers)((_parent, { input }, { db, authUser }: { db: DbConnection, authUser: AuthUser }) => {
+            input.user = authUser.id
             return db.sequelize.transaction((t: Transaction) => {
                 return db.Comment.create(input, { transaction: t })
             }).catch(handleError)
-        },
-        updateComment: (_parent, { id, input }, { db }: { db: DbConnection }) => {
+        }),
+        updateComment: compose(...authResolvers)((_parent, { id, input }, { db, authUser }: { db: DbConnection, authUser: AuthUser }) => {
             id = parseInt(id)
             return db.sequelize.transaction(async (t: Transaction) => {
                 const comment: CommentInstance = await db.Comment.findById(id)
 
-                if (!comment) {
-                    throw new Error(`Comment with id ${id} not found.`)
-                }
+                throwError(!comment, `Comment with id ${id} not found.`)
+                throwError(comment.get('user') != authUser.id, `Unauthorized! You can only edit your comments!`)
 
+                input.user = authUser.id
                 return comment.update(input, { transaction: t })
             }).catch(handleError)
-        },
-        deleteComment: (_parent, { id }, { db }: { db: DbConnection }) => {
+        }),
+        deleteComment: compose(...authResolvers)((_parent, { id }, { db, authUser }: { db: DbConnection, authUser: AuthUser }) => {
             id = parseInt(id)
             return db.sequelize.transaction(async (t: Transaction) => {
                 const comment: CommentInstance = await db.Comment.findById(id)
 
-                if (!comment) {
-                    throw new Error(`Comment with id ${id} not found`)
-                }
+                throwError(!comment, `Comment with id ${id} not found.`)
+                throwError(comment.get('user') != authUser.id, `Unauthorized! You can only delete your comments!`)
 
                 await comment.destroy({ transaction: t })
 
                 return true
             }).catch(handleError)
-        }
+        })
     }
 }
