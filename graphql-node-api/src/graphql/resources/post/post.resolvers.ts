@@ -13,7 +13,7 @@ export const postResolvers = {
             return db.User.findById(parent.get('author')).catch(handleError)
         },
         comments: (parent: CommentInstance, {first = 10, offset = 0}, {db}: {db: DbConnection}) => {
-            return db.User.findAll({
+            return db.Comment.findAll({
                 where: { post: parent.get('id') },
                 limit: first,
                 offset
