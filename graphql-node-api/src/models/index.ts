@@ -15,7 +15,7 @@ if (!db) {
     config = {
         ...config,
         //https://sequelize.org/master/manual/querying.html#operators-aliases
-        operatorsAliases: false
+        $in: Sequelize.Op.in //now we can find a list of ids [1,3,4,5]
     }
     
     const sequelize: Sequelize.Sequelize = new Sequelize(
