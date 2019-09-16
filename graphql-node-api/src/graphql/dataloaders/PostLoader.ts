@@ -1,11 +1,16 @@
 import { PostModel, PostInstance } from "../../models/PostModel";
+import { RequestedFields } from "../ast/RequestedFields";
+import { DataLoaderParam } from "../../interfaces/DataLoaderParamInterface";
 
 export class PostLoader {
-  static batchPosts(Post: PostModel, ids: number[]): Promise<PostInstance[]> {
+  static batchPosts(Post: PostModel, params: DataLoaderParam<number>[], requestedFields: RequestedFields): Promise<PostInstance[]> {
+    const ids: number[] = params.map(item => item.key)
+
     return Post.findAll({
       where: {
         id: { $in: ids }
-      }
+      },
+      attributes: requestedFields.getFields(params[0].info, { keep: ['id'], exclude: ['comments'] })
     });
   }
 }

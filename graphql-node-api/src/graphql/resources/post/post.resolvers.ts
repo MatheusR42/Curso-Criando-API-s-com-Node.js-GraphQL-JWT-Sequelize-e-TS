@@ -12,8 +12,11 @@ import { RequestedFields } from "../../ast/RequestedFields";
 
 export const postResolvers = {
     Post: {
-        author: (parent: PostInstance, _args, {dataloaders: { userLoader }}: {dataloaders: DataLoaders}) => {
-            return userLoader.load(parent.get('author'))
+        author: (parent: PostInstance, _args, {dataloaders: { userLoader }}: {dataloaders: DataLoaders}, info: GraphQLResolveInfo) => {
+            return userLoader.load({
+                        key: parent.get('author'),
+                        info
+                    })
                     .catch(handleError)
         },
         comments: (parent: CommentInstance, {first = 10, offset = 0}, {db, requestedFields}: {db: DbConnection, requestedFields: RequestedFields}, info: GraphQLResolveInfo) => {

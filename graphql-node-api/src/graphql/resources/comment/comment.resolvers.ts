@@ -11,12 +11,18 @@ import { GraphQLResolveInfo } from "graphql";
 
 export const commentResolvers = {
     Comment: {
-        user: (parent: CommentInstance, _args, { dataloaders: { userLoader } } : { dataloaders: DataLoaders }) => {
-            return userLoader.load(parent.get('user'))
+        user: (parent: CommentInstance, _args, { dataloaders: { userLoader } } : { dataloaders: DataLoaders }, info: GraphQLResolveInfo) => {
+            return userLoader.load({
+                        key: parent.get('user'),
+                        info
+                    })
                     .catch(handleError)
         },
-        post: (parent: CommentInstance, _args, { dataloaders: { postLoader } } : { dataloaders: DataLoaders }) => {
-            return postLoader.load(parent.get('post'))
+        post: (parent: CommentInstance, _args, { dataloaders: { postLoader } } : { dataloaders: DataLoaders }, info: GraphQLResolveInfo) => {
+            return postLoader.load({
+                        key: parent.get('post'),
+                        info
+                    })
                     .catch(handleError)
         }
     },
