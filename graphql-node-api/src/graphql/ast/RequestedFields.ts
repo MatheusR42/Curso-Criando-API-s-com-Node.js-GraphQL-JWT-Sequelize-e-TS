@@ -5,7 +5,7 @@ import { difference, union } from "lodash";
 export class RequestedFields {
   getFields(
     info: GraphQLResolveInfo,
-    options: { keep?: string[]; exclude?: string[] }
+    options?: { keep?: string[]; exclude?: string[] }
   ): string[] {
     let fields: string[] = Object.keys(graphqlFields(info));
 

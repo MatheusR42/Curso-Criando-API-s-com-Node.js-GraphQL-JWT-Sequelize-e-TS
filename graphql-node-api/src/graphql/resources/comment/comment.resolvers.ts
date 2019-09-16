@@ -6,6 +6,8 @@ import { compose } from "../../composable/composable.resolver";
 import { authResolvers } from "../../composable/auth.resolver";
 import { AuthUser } from "../../../interfaces/AuthUserInterface";
 import { DataLoaders } from "../../../interfaces/DataLoadersInterface";
+import { RequestedFields } from "../../ast/RequestedFields";
+import { GraphQLResolveInfo } from "graphql";
 
 export const commentResolvers = {
     Comment: {
@@ -19,13 +21,14 @@ export const commentResolvers = {
         }
     },
     Query: {
-        commentsByPost: (_parent, { postId, first = 10, offset = 10 }, { db }: { db: DbConnection }) => {
+        commentsByPost: (_parent, { postId, first = 10, offset = 10 }, {db, requestedFields}: {db: DbConnection, requestedFields: RequestedFields}, info: GraphQLResolveInfo) => {
             postId = parseInt(postId)
             
             return db.Comment.findAll({
                 where: { post: postId },
                 limit: first,
-                offset
+                offset,
+                attributes: requestedFields.getFields(info)
             }).catch(handleError)   
         }
     },

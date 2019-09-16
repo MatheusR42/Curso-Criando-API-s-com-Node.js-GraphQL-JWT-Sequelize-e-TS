@@ -6,31 +6,37 @@ import { handleError, throwError } from "../../../utils/utils"
 import { compose } from "../../composable/composable.resolver"
 import { authResolvers } from "../../composable/auth.resolver"
 import { AuthUser } from "../../../interfaces/AuthUserInterface"
+import { RequestedFields } from "../../ast/RequestedFields"
 
 export const userResolvers = {
     User: {
-        posts: (parent: UserInstance, { first = 10, offset = 0 }, { db }: { db: DbConnection }, info: GraphQLResolveInfo) => {
+        posts: (parent: UserInstance, { first = 10, offset = 0 }, {db, requestedFields}: {db: DbConnection, requestedFields: RequestedFields}, info: GraphQLResolveInfo) => {
             return db.Post.findAll({
                 where: { 
                     author: parent.get('id')
                 },
                 limit: first,
-                offset
+                offset,
+                attributes: requestedFields.getFields(info, { keep: ['id'], exclude: ['comments']})
             }).catch(handleError)
         },
     },
     Query: {
-        users: (_parent, { first = 10, offset = 0 }, { db }: { db: DbConnection }) => {
+        users: (_parent, { first = 10, offset = 0 }, {db, requestedFields}: {db: DbConnection, requestedFields: RequestedFields}, info: GraphQLResolveInfo) => {
             return db.User.findAll({
                 limit: first,
-                offset
+                offset,
+                attributes: requestedFields.getFields(info, { keep: ['id'], exclude: ['posts']})
             }).catch(handleError)
         },
-        user: async (_parent, { id }, { db }: { db: DbConnection }) => {
+        user: async (_parent, { id }, {db, requestedFields}: {db: DbConnection, requestedFields: RequestedFields}, info: GraphQLResolveInfo) => {
             id = parseInt(id)
             
             try {
-                const user = await db.User.findById(id);
+                const user = await db.User.findById(id, {
+                    attributes: requestedFields.getFields(info, { keep: ['id'], exclude: ['posts']})
+                })
+
                 if (!user) {
                     throw new Error(`User with id ${id} not found`)
                 }
@@ -40,9 +46,11 @@ export const userResolvers = {
                 return handleError(error)
             }
         },
-        currentUser: compose(...authResolvers)(async (_parent, { input }, { db, authUser }: { db: DbConnection, authUser: AuthUser }) => {
+        currentUser: compose(...authResolvers)(async (_parent, _args, {db, requestedFields, authUser} : {db: DbConnection, requestedFields: RequestedFields, authUser: AuthUser}, info: GraphQLResolveInfo) => {
             const id = authUser.id;
-            const user = await db.User.findById(id)
+            const user = await db.User.findById(id, {
+                attributes: requestedFields.getFields(info, { keep: ['id'], exclude: ['posts']})
+            })
 
             throwError(!user, `User with id ${id} not found`)
             
