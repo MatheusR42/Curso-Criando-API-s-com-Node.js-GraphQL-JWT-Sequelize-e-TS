@@ -2,6 +2,7 @@ import * as express from 'express';
 import * as graphqlHTTP from 'express-graphql'
 import * as cors from 'cors';
 import * as compression from 'compression';
+import * helmet from 'helmet';
 import schema from './graphql/schema'
 import db from './models'
 import { extractJwtMiddleware, dbMiddleware } from './middlewares'
@@ -35,6 +36,8 @@ class App {
 
         this.express.use(compression())
 
+        this.express.use(helmet())
+        
         this.express.use('/graphql', 
             extractJwtMiddleware(),
             dbMiddleware(this.dataLoaderFactory, this.requestedFields),
