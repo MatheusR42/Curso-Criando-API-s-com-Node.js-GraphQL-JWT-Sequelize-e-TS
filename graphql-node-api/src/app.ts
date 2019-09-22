@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as graphqlHTTP from 'express-graphql'
 import * as cors from 'cors';
 import * as compression from 'compression';
-import * helmet from 'helmet';
+import * as helmet from 'helmet';
 import schema from './graphql/schema'
 import db from './models'
 import { extractJwtMiddleware, dbMiddleware } from './middlewares'
