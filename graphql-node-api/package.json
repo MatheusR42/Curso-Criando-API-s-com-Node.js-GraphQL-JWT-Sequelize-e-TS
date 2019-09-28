@@ -9,7 +9,8 @@
     "start": "npm run build && npm run clusters",
     "dev": "NODE_ENV=development JWT_SECRET=iron_man node_modules/.bin/nodemon --delay 5 dist/index",
     "gulp": "node_modules/.bin/gulp",
-    "test": "NODE_ENV=test JWT_SECRET=iron_man_test mocha"
+    "test": "NODE_ENV=test JWT_SECRET=iron_man_test mocha",
+    "coverage": "nyc --extension .ts --include 'src/**/*.ts' --reporter html npm run test"
   },
   "repository": {
     "type": "git",
@@ -44,6 +45,7 @@
     "gulp-typescript": "^5.0.1",
     "mocha": "<5.0.0",
     "nodemon": "^1.19.1",
+    "nyc": "^11.9.0",
     "ts-node": "^3.3.0",
     "typescript": "^3.6.2"
   },
